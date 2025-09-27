@@ -6,5 +6,8 @@
   "scripts": {
     "lint": "echo 'No sources to lint in laser-mace-testing placeholder.'",
     "build": "echo 'No build for laser-mace-testing placeholder.'"
+  },
+  "devDependencies": {
+    "next": "14.2.3"
   }
 }
