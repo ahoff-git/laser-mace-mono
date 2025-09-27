@@ -1,5 +1,4 @@
-import { BoundingBox } from ".";
-import { Point } from "./commonTypes";
+import { BoundingBox, Point } from "./commonTypes";
 
 export function dist(obj1: Point, obj2:Point) {
     return Math.sqrt((obj2.x - obj1.x) * (obj2.x - obj1.x) + (obj2.y - obj1.y) * (obj2.y - obj1.y));

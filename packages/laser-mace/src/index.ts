@@ -8,7 +8,6 @@ export * from './utils';
 export * from './httpRequests';
 export * from './peerNet';
 export * from './rndName';
-export * from './canvasBuddy';
 export * from './customSort';
 export * from './commonTypes';
 export * from './interpolateLoc';
