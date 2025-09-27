@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist-tests"
+  },
+  "include": [
+    "tests/*.ts",
+    "src/fsm.ts",
+    "src/random.ts",
+    "src/math.ts",
+    "src/test.ts"
+  ]
+}

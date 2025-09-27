@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",             // Optional, sets a reasonable target
+    "module": "NodeNext",           // Required for Node's ESM modules
+    "moduleResolution": "NodeNext", // Resolve modules like Node.js does    
+    "strict": true,                 // Keeps your code type-safe
+    "esModuleInterop": true,        // Makes CommonJS/ESM play nice
+    "resolveJsonModule": true,       // Allows importing JSON files
+    "baseUrl": ".", 
+    "paths": {
+      "tsup": ["node_modules/tsup"]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "laser-mace-testing",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Placeholder for the private laser-mace-testing sources.",
+  "scripts": {
+    "lint": "echo 'No sources to lint in laser-mace-testing placeholder.'",
+    "build": "echo 'No build for laser-mace-testing placeholder.'"
+  }
+}
