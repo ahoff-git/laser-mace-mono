@@ -1,0 +1,16 @@
+{
+  "name": "laser-mace-mono",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monorepo that groups the laser-mace family of packages.",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces",
+    "fetch:laser-mace": "./scripts/sync-package.sh laser-mace packages/laser-mace",
+    "fetch:laser-mace-engine": "./scripts/sync-package.sh laser-mace-engine packages/laser-mace-engine",
+    "fetch:laser-mace-testing": "./scripts/sync-package.sh laser-mace-testing packages/laser-mace-testing"
+  }
+}

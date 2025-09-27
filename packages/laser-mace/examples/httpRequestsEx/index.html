@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Request Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #response { white-space: pre-wrap; background: #f4f4f4; padding: 10px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>Send Request Demo</h1>
+    <form id="requestForm">
+        <label for="url">API URL:</label>
+        <input type="text" id="url" placeholder="https://solid-operator.vercel.app/api/randomName" value="https://solid-operator.vercel.app/api/randomName" required style="width: 100%; margin-bottom: 10px;">
+        <label for="payload">Payload (JSON):</label>
+        <textarea id="payload" placeholder='{"key": "value"}' style="width: 100%; height: 100px; margin-bottom: 10px;">{}</textarea>
+        <button type="submit" id="submitBtn">Send Request</button>
+    </form>
+    <h2>Response</h2>
+    <div id="response">Waiting for response...</div>
+
+    <script type="module" src="./dist/script.js"></script>
+
+</body>
+</html>
