@@ -4,11 +4,11 @@
     "description": "A simple website to test sendRequest function",
     "scripts": {
         "start": "http-server . -c-1",
-        "build": "tsup src/", 
-        "watch": "tsup src/ --watch", 
-        "dev": "concurrently \"npm:watch\" \"npm:start\"",
+        "build": "tsup src/",
+        "watch": "tsup src/ --watch",
+        "dev": "concurrently \"pnpm run watch\" \"pnpm run start\"",
         "version": "cat node_modules/laser-mace/package.json | grep version",
-        "link-laser-mace": "npm link laser-mace"
+        "link-laser-mace": "pnpm link --global laser-mace"
     },
     "devDependencies": {
         "concurrently": "^8.2.2",

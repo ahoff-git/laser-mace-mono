@@ -1,40 +1,13 @@
-# Laser Mace Monorepo
+Mono repo for all things laser-mace 
 
-This repository centralizes the Laser Mace ecosystem into a single npm workspace.
+Names of each package should be fairly straight forward. 
+`laser-mace` is the OG collection of various disparate utility functions. 
+`laser-mace-engine` is the in development ECSY game engine (see docs/ecsy-loop-requirements.md)
+`laser-mace-testing` is the testing ground for both of the above projects.
+`peernet` is a peer to peer library I'm working on and plan to leverage within the engine.
 
-## Structure
+All of these projects should exist in my gitlab https://github.com/ahoff-git/...
+Some are private, out of embarrassment, but I am slowly working to get them more public. 
 
-- `packages/laser-mace` – the published Laser Mace package.
-- `packages/laser-mace-engine` – the engine that powers the experience.
-- `packages/laser-mace-testing` – placeholder for the private testing utilities.
-- `scripts/` – utilities for keeping the packages in sync with their source repositories.
-
-## Getting Started
-
-Install dependencies for an individual package and run its scripts using npm workspaces:
-
-```bash
-npm install --workspace packages/laser-mace
-npm run build --workspace packages/laser-mace
-npm run lint --workspace packages/laser-mace
-```
-
-Repeat for `laser-mace-engine`. The `laser-mace-testing` package is private; populate it with:
-
-```bash
-npm run fetch:laser-mace-testing
-```
-
-Set the `GITHUB_TOKEN` environment variable with a token that has read access to the private repository before running the fetch command. The same fetch scripts exist for the public packages to make future syncs easy.
-
-## Updating Packages
-
-Use the provided helper script to sync a package from GitHub:
-
-```bash
-npm run fetch:laser-mace
-npm run fetch:laser-mace-engine
-npm run fetch:laser-mace-testing
-```
-
-These commands clone the respective repository and copy their contents into the `packages` directory (excluding their Git metadata).
+You don't really get a readme because this file is just for myself. 
+I'm just writing this for CODEX to read. 😊

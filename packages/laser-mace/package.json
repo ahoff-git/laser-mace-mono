@@ -10,13 +10,13 @@
   "scripts": {
     "build": "tsup src/index.ts --dts --format cjs,esm",
     "watch": "tsup src/index.ts --dts --format cjs,esm --watch",
-    "npm-bump-version-patch": "npm version patch",
-    "npm-bump-version-minor": "npm version minor",
-    "npm-bump-version-major": "npm version major",
-    "link": "npm link",
-    "test": "npx tsc -p tsconfig.tests.json && node --test dist-tests/tests/*.js",
+    "npm-bump-version-patch": "pnpm version patch",
+    "npm-bump-version-minor": "pnpm version minor",
+    "npm-bump-version-major": "pnpm version major",
+    "link": "pnpm link --global",
+    "test": "pnpm exec tsc -p tsconfig.tests.json && node --test dist-tests/tests/*.js",
     "lint": "eslint . --ext .ts",
-    "prepare": "npm run build"
+    "prepare": "pnpm run build"
   },
   "keywords": [
     "typescript",

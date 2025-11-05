@@ -56,8 +56,8 @@ Laser-Mace is my personal Swiss army knife of tools—a collection of utilities 
 Laser-Mace is written in TypeScript and the sources need to be compiled before use.
 
 ```bash
-npm install
-npm run build # or rely on `npm install` triggering `prepare`
+pnpm install
+pnpm build # or rely on `pnpm install` triggering `prepare`
 ```
 
 
@@ -68,8 +68,8 @@ The `dist/` directory is generated during the build and is excluded from git.
 Run the unit tests using [Jest](https://jestjs.io/), which is installed as a dev dependency.
 
 ```bash
-npm install
-npm test
+pnpm install
+pnpm test
 ```
 
 ## Usage
@@ -107,4 +107,5 @@ MIT – Go wild.
 ---
 
 Laser-Mace: Because every project deserves a little fun and chaos.
+
 

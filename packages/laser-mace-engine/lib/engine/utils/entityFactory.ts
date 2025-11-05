@@ -2,7 +2,14 @@ import { Position } from '../components/Position';
 import { Velocity } from '../components/Velocity';
 import { MeshComponent } from '../components/Mesh';
 import { Collider } from '../components/Collider';
-import { BodyType, BodyTypeValue } from '../components/BodyType';
+import { Immovable } from '../components/Immovable';
+import {
+  BodyType,
+  BodyTypeInput,
+  BodyTypeValue,
+  DEFAULT_BODY_TYPE,
+  normalizeBodyType,
+} from '../components/BodyType';
 import { BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
 
 export interface CubeOptions {
@@ -12,7 +19,8 @@ export interface CubeOptions {
   color?: number;
   size?: number;
   friction?: number;
-  bodyType?: BodyTypeValue;
+  bodyType?: BodyTypeInput;
+  immovable?: boolean;
   /** If true, mark the entity so UI can treat it as stationary */
   stationary?: boolean;
 }
@@ -25,13 +33,18 @@ export function createCubeEntity(opts: CubeOptions) {
     color = 0x00ff00,
     size = 4,
     friction = 0,
-    bodyType = 'dynamic',
+    bodyType,
+    immovable = false,
     stationary = false,
   } = opts;
 
   const geometry = new BoxGeometry(size, size, size);
   const material = new MeshBasicMaterial({ color });
   const cube = new Mesh(geometry, material);
+
+  const normalizedBodyType = normalizeBodyType(
+    bodyType ?? (immovable ? 'fixed' : DEFAULT_BODY_TYPE),
+  );
 
   const entity = world
     .createEntity()
@@ -40,9 +53,11 @@ export function createCubeEntity(opts: CubeOptions) {
     .addComponent(Collider, { size, friction })
     .addComponent(MeshComponent, { mesh: cube });
 
-  entity.addComponent(BodyType, { value: bodyType });
+  entity.addComponent(BodyType, { value: normalizedBodyType });
+  if (immovable) {
+    entity.addComponent(Immovable);
+  }
   if (stationary) (entity as any).stationary = true;
 
   return entity;
 }
-

@@ -1,6 +1,6 @@
 import { sendRequest } from "laser-mace"
 /* You'll need to run the following: 
-    npm run dev
+    pnpm dev
 
 */
 

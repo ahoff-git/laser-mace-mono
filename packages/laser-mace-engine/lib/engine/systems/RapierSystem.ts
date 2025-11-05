@@ -8,7 +8,6 @@ import { Bounds } from '../types';
 import { nowMs, massFromSize } from '../utils/common';
 
 export interface RapierSystemConfig {
-  gravity?: { x: number; y: number; z: number };
   /** Callback fired when two colliders start or stop colliding */
   onCollision?: (entityA: any, entityB: any, started: boolean) => void;
   /** Optional bounds to create static wall colliders */
@@ -32,9 +31,9 @@ async function loadRapierModule(): Promise<any> {
   return mod;
 }
 
-export class RapierSystem extends System<RapierSystemConfig> {
+export class RapierSystem extends System {
   rapier: typeof import('@dimforge/rapier3d-compat') | null = null;
-  world: RAPIERType.World | null = null;
+  physicsWorld: RAPIERType.World | null = null;
   private bodyMap = new Map<number, RAPIERType.RigidBody>();
   private colliderMap = new Map<number, any>();
   private entityColliderMap = new Map<number, number>();
@@ -53,14 +52,12 @@ export class RapierSystem extends System<RapierSystemConfig> {
   }
 
   init(attrs?: RapierSystemConfig): void {
-    const gravity = attrs?.gravity ?? { x: 0, y: 0, z: 0 };
     this.onCollision = attrs?.onCollision;
     this.pendingBounds = attrs?.bounds;
     if (attrs?.fixedDelta) this.fixedDelta = attrs.fixedDelta;
     if (attrs?.maxSubSteps) this.maxSubSteps = attrs.maxSubSteps;
     loadRapierModule().then((mod) => {
       this.rapier = mod;
-      this.world = new mod.World(gravity);
       // Temporarily disable EventQueue to avoid WASM panics observed in dev
       this.eventQueue = null as any;
       if (this.pendingBounds) {
@@ -71,7 +68,7 @@ export class RapierSystem extends System<RapierSystemConfig> {
   }
 
   execute(delta: number): void {
-    if (!this.world) return;
+    if (!this.physicsWorld) return;
 
     const added = (this.queries.movers.added as any[]) ?? [];
     const removed = (this.queries.movers.removed as any[]) ?? [];
@@ -112,8 +109,8 @@ export class RapierSystem extends System<RapierSystemConfig> {
     let steps = 0;
     while (this.accumulator >= this.fixedDelta && steps < this.maxSubSteps) {
       try {
-        (this.world as any).timestep = this.fixedDelta;
-        (this.world as any).step(this.eventQueue ?? undefined);
+        (this.physicsWorld as any).timestep = this.fixedDelta;
+        (this.physicsWorld as any).step(this.eventQueue ?? undefined);
       } catch (_e) {
         break; // if WASM not ready or invalid state, bail this frame
       }
@@ -155,7 +152,7 @@ export class RapierSystem extends System<RapierSystemConfig> {
   }
 
   private addBody(entity: any): void {
-    if (!this.world || !this.rapier) return;
+    if (!this.physicsWorld || !this.rapier) return;
 
     const pos = entity.getComponent(Position)!;
     const vel = entity.getComponent(Velocity)!;
@@ -176,14 +173,14 @@ export class RapierSystem extends System<RapierSystemConfig> {
         desc.setAdditionalMass(mass);
       }
     }
-    const body = (this.world as any).createRigidBody(desc);
+    const body = (this.physicsWorld as any).createRigidBody(desc);
 
     const friction = collider ? ((collider as any).friction ?? 0) : 0; // default 0 to avoid drag
     const half = size / 2;
     const colDesc = R.ColliderDesc.cuboid(half, half, half)
       .setRestitution(0)
       .setFriction(friction);
-    const col = (this.world as any).createCollider(colDesc, body);
+    const col = (this.physicsWorld as any).createCollider(colDesc, body);
     col.setActiveEvents(R.ActiveEvents.COLLISION_EVENTS);
     this.bodyMap.set(entity.id, body);
     this.colliderMap.set(col.handle, entity);
@@ -202,8 +199,11 @@ export class RapierSystem extends System<RapierSystemConfig> {
     switch (bodyType) {
       case 'fixed':
         return R.RigidBodyDesc.fixed();
-      case 'kinematic':
+      case 'kinematicPosition':
         return R.RigidBodyDesc.kinematicPositionBased();
+      case 'kinematicVelocity':
+        return R.RigidBodyDesc.kinematicVelocityBased?.()
+          ?? R.RigidBodyDesc.kinematicPositionBased();
       case 'dynamic':
       default:
         return R.RigidBodyDesc.dynamic();
@@ -211,7 +211,7 @@ export class RapierSystem extends System<RapierSystemConfig> {
   }
 
   private createBoundaryColliders(bounds: Bounds): void {
-    if (!this.world || !this.rapier) return;
+    if (!this.physicsWorld || !this.rapier) return;
     const R = this.rapier as any;
     const hx = (bounds.max.x - bounds.min.x) / 2;
     const hy = (bounds.max.y - bounds.min.y) / 2;
@@ -228,11 +228,11 @@ export class RapierSystem extends System<RapierSystemConfig> {
       sy: number,
       sz: number
     ) => {
-      const body = (this.world as any).createRigidBody(R.RigidBodyDesc.fixed().setTranslation(x, y, z));
+      const body = (this.physicsWorld as any).createRigidBody(R.RigidBodyDesc.fixed().setTranslation(x, y, z));
       const colDesc = R.ColliderDesc.cuboid(sx, sy, sz)
         .setRestitution(0)
         .setFriction(1);
-      const col = (this.world as any).createCollider(colDesc, body);
+      const col = (this.physicsWorld as any).createCollider(colDesc, body);
       col.setActiveEvents(R.ActiveEvents.COLLISION_EVENTS);
     };
     // left/right
@@ -248,16 +248,16 @@ export class RapierSystem extends System<RapierSystemConfig> {
 
   /** Remove the Rapier rigid body and collider for the given entity. */
   removeBody(entity: any): void {
-    if (!this.world || !entity || typeof entity.id !== 'number') return;
+    if (!this.physicsWorld || !entity || typeof entity.id !== 'number') return;
 
     const body = this.bodyMap.get(entity.id);
     const handle = this.entityColliderMap.get(entity.id);
 
     if (handle !== undefined) {
       try {
-        const collider = (this.world as any).getCollider?.(handle);
-        if (collider && (this.world as any).removeCollider) {
-          (this.world as any).removeCollider(collider, true);
+        const collider = (this.physicsWorld as any).getCollider?.(handle);
+        if (collider && (this.physicsWorld as any).removeCollider) {
+          (this.physicsWorld as any).removeCollider(collider, true);
         }
       } catch { /* ignore WASM traps; cleanup maps below */ }
       this.colliderMap.delete(handle);
@@ -266,7 +266,7 @@ export class RapierSystem extends System<RapierSystemConfig> {
 
     if (body) {
       try {
-        (this.world as any).removeRigidBody?.(body);
+        (this.physicsWorld as any).removeRigidBody?.(body);
       } catch { /* ignore */ }
       this.bodyMap.delete(entity.id);
     }
@@ -275,8 +275,8 @@ export class RapierSystem extends System<RapierSystemConfig> {
   dispose(): void {
     this.eventQueue?.free();
     this.eventQueue = null;
-    this.world?.free();
-    this.world = null;
+    this.physicsWorld?.free();
+    this.physicsWorld = null;
     this.bodyMap.clear();
     this.colliderMap.clear();
     this.entityColliderMap.clear();

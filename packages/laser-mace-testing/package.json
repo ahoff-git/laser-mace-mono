@@ -1,10 +1,18 @@
 {
-  "name": "laser-mace-testing",
+  "name": "laser-mace-test",
+  "version": "0.2.1",
   "private": true,
-  "version": "0.0.0",
-  "description": "Placeholder for the private laser-mace-testing sources.",
   "scripts": {
-    "lint": "echo 'No sources to lint in laser-mace-testing placeholder.'",
-    "build": "node -e \"console.info('No public build for laser-mace-testing placeholder.')\""
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@dimforge/rapier3d-compat": "^0.18.0-beta.0",
+    "laser-mace": "workspace:*",
+    "laser-mace-engine": "workspace:*",
+    "next": "14.1.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   }
 }

@@ -7,14 +7,15 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
-    "lint": "npm run lint --workspaces",
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint",
     "fetch:laser-mace": "./scripts/sync-package.sh laser-mace packages/laser-mace",
     "fetch:laser-mace-engine": "./scripts/sync-package.sh laser-mace-engine packages/laser-mace-engine",
     "fetch:laser-mace-testing": "./scripts/sync-package.sh laser-mace-testing packages/laser-mace-testing",
-    "build:laser-mace-testing": "npm run build --workspace laser-mace-testing",
-    "start:laser-mace-testing": "npm run start --workspace laser-mace-testing",
-    "dev:laser-mace-testing": "npm run dev --workspace laser-mace-testing",
-    "vercel-build": "npm run build:laser-mace-testing"
-  }
+    "build:laser-mace-testing": "pnpm --filter laser-mace-testing run build",
+    "start:laser-mace-testing": "pnpm --filter laser-mace-testing run start",
+    "dev:laser-mace-testing": "pnpm --filter laser-mace-testing run dev",
+    "vercel-build": "pnpm run build:laser-mace-testing"
+  },
+  "packageManager": "pnpm@9.12.3"
 }

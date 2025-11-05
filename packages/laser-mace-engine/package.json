@@ -2,8 +2,8 @@
   "name": "laser-mace-engine",
   "version": "1.10.0",
   "description": "",
-  "main": "dist/engine/index.js",
-  "types": "dist/engine/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "directories": {
     "lib": "lib"
@@ -13,12 +13,11 @@
     "dev": "tsc -w",
     "clean": "rm -rf dist",
     "lint": "eslint lib/**/*.ts",
-    "test": "node --experimental-specifier-resolution=node --loader ./tests/loader.mjs --test",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run lint && npm run typecheck && npm run build",
-    "release": "npm version patch",
-    "release:minor": "npm version minor",
-    "release:major": "npm version major"
+    "prepublishOnly": "pnpm run lint && pnpm run typecheck && pnpm run build",
+    "release": "pnpm version patch",
+    "release:minor": "pnpm version minor",
+    "release:major": "pnpm version major"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +30,7 @@
   "devDependencies": {
     "typescript": "^5.8.3",
     "eslint": "^9.9.0",
-    "typescript-eslint": "^8.0.0"
+    "typescript-eslint": "^8.0.0",
+    "@types/three": "^0.164.0"
   }
 }
