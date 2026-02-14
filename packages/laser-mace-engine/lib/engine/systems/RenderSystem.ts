@@ -9,8 +9,8 @@ export interface RenderSystemConfig {
 
 export class RenderSystem extends System {
   private scene!: Scene;
-  private camera!: PerspectiveCamera;
-  private renderer!: WebGLRenderer;
+  camera!: PerspectiveCamera;
+  renderer!: WebGLRenderer; 
   private lastPosAt: Map<number, number> = new Map();
 
   /** Current number of mesh objects in the scene. */

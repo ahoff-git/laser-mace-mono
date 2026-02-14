@@ -35,7 +35,7 @@ Core data types shipped with the engine:
 
 - `createCubeEntity` spawns a textured cube with sensible defaults (mesh, collider, velocity).
 - `RapierSync` provides hooks if you need to customize how Rapier data maps to ECS components.
-- `generateBoundaryLandmarks` and `cameraController` support basic arena setups.
+- `cameraController` support basic arena setups.
 
 ## Building from source
 

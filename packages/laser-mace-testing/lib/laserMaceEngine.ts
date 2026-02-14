@@ -8,23 +8,20 @@ import {
   RapierSystem,
   Immovable,
   Destroy,
-  WrapSystem,
   SpawnSystem,
-  CleanupSystem,
   queueAdd,
   queueRemove,
   createCubeEntity,
-  generateBoundaryLandmarks,
   createCameraController,
   BodyType
 } from 'laser-mace-engine';
+import { createEngineUtils } from './utils/engineUtils';
 
 type Vec3 = { x: number; y: number; z: number };
 
 interface EngineOptions {
   canvas: HTMLCanvasElement;
   boundary: number;
-  landmarkSpacing: number;
   onEvent?: (msg: string) => void;
   onUpdate?: (data: any[]) => void;
 }
@@ -32,7 +29,6 @@ interface EngineOptions {
 export function createLaserMaceEngine({
   canvas,
   boundary,
-  landmarkSpacing,
   onEvent,
   onUpdate,
 }: EngineOptions) {
@@ -56,18 +52,12 @@ export function createLaserMaceEngine({
       onEvent?.(msg);
     },
     bounds: {
-      min: { x: -boundary, y: -boundary, z: -boundary },
-      max: { x: boundary, y: boundary, z: boundary },
+      min: { x: 0, y: 0, z: 0 },
+      max: { x: boundary, y: boundary, z: boundary},
     },
   });
 
   world.registerSystem(RenderSystem, { canvas });
-  world.registerSystem(WrapSystem, {
-    width: boundary * 2,
-    height: boundary * 2,
-    depth: boundary * 2,
-  });
-  world.registerSystem(CleanupSystem);
 
   const renderSystem = world.getSystem(RenderSystem);
   const entities: any[] = [];
@@ -79,23 +69,7 @@ export function createLaserMaceEngine({
     stopOrbit,
   } = createCameraController(renderSystem);
 
-  // Populate world with boundary landmarks so users can orient themselves.
-  generateBoundaryLandmarks(boundary, landmarkSpacing).forEach((pos) => {
-    queueAdd(world, (w) => {
-      const lm = createCubeEntity({
-        world: w,
-        position: pos,
-        color: 0xff0000,
-        bodyType: 'fixed',
-        immovable: true,
-        friction: 0,
-        size: 2,
-        stationary: true,
-      });
-      entities.push(lm);
-      onEvent?.(`Spawned landmark ${lm.id}`);
-    });
-  });
+  const utils = createEngineUtils({ world, entities, onEvent });
 
   const extractData = (e: any) => ({
     id: e.id,
@@ -141,18 +115,6 @@ export function createLaserMaceEngine({
     });
   }
 
-  function clearMoving() {
-    const moving = entities.filter((e) => !e.stationary);
-    moving.forEach((e) => {
-      queueRemove(world, e);
-    });
-    for (let i = entities.length - 1; i >= 0; i -= 1) {
-      if (!entities[i].stationary) entities.splice(i, 1);
-    }
-    onUpdate?.([]);
-    onEvent?.('Cleared moving entities');
-  }
-
   return {
     world,
     renderSystem,
@@ -160,12 +122,15 @@ export function createLaserMaceEngine({
     start,
     stop,
     spawn,
-    clearMoving,
     adjustZoom,
     zoomIn,
     zoomOut,
     orbitCamera,
     stopOrbit,
+    utils,
   };
 }
+
+export type Engine = ReturnType<typeof createLaserMaceEngine>;
+export type SpawnArgs = Parameters<Engine['spawn']>[0];
 
